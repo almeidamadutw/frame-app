@@ -28,7 +28,6 @@ import {
   Plus,
   Search,
   Send,
-  Sparkles,
   Target,
   TrendingUp,
   Upload,
@@ -120,6 +119,7 @@ type ClientRecord = {
   contact: string;
   email: string;
   phone: string;
+  origin: string;
   instagram: string;
   since: string;
   health: number;
@@ -142,6 +142,7 @@ const initialClients: ClientRecord[] = [
     contact: "Dra. Luciana Rocha",
     email: "contato@casalodonto.com.br",
     phone: "(15) 99712-2048",
+    origin: "Indicação",
     instagram: "@casalodonto",
     since: "Abril de 2026",
     health: 94,
@@ -162,6 +163,7 @@ const initialClients: ClientRecord[] = [
     contact: "Enrico Alves",
     email: "contato@petraeternum.com",
     phone: "(15) 99841-7022",
+    origin: "Networking",
     instagram: "@petraaeternum",
     since: "Agosto de 2026",
     health: 76,
@@ -182,6 +184,7 @@ const initialClients: ClientRecord[] = [
     contact: "Lucas Martins",
     email: "lucas@mmu.app",
     phone: "(11) 98814-5301",
+    origin: "Instagram",
     instagram: "@mmu.app",
     since: "Agosto de 2026",
     health: 82,
@@ -202,6 +205,7 @@ const initialClients: ClientRecord[] = [
     contact: "Luciana Rocha",
     email: "luciana@ceoclubmentoria.com.br",
     phone: "(15) 99108-4420",
+    origin: "Indicação",
     instagram: "@lucianarocha.dra",
     since: "Maio de 2026",
     health: 90,
@@ -222,6 +226,7 @@ const initialClients: ClientRecord[] = [
     contact: "Jemima Mendonza",
     email: "contato@demendonza.com.br",
     phone: "(15) 99603-8821",
+    origin: "Instagram",
     instagram: "@demendonzaodonto",
     since: "Julho de 2026",
     health: 88,
@@ -239,6 +244,10 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
   const [newClientOpen, setNewClientOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newService, setNewService] = useState("Social media mensal");
+  const [newContact, setNewContact] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [newOrigin, setNewOrigin] = useState("Indicação");
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -246,7 +255,7 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
       const matchesStatus = status === "Todos" || client.status === status;
       const matchesSearch =
         !query ||
-        [client.name, client.segment, client.service, client.contact].some((value) =>
+        [client.name, client.segment, client.service, client.contact, client.phone, client.origin].some((value) =>
           value.toLowerCase().includes(query),
         );
       return matchesStatus && matchesSearch;
@@ -272,11 +281,12 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
       tone: "blue",
       progress: 12,
       monthly: "A definir",
-      next: "Enviar formulário de onboarding",
-      contact: "Contato principal a definir",
-      email: "E-mail pendente",
-      phone: "Telefone pendente",
-      instagram: "Instagram pendente",
+      next: "Enviar briefing inicial",
+      contact: newContact.trim() || "Não informado",
+      email: newEmail.trim() || "Não informado",
+      phone: newPhone.trim() || "Não informado",
+      origin: newOrigin,
+      instagram: "Não informado",
       since: "Agosto de 2026",
       health: 70,
       contents: 0,
@@ -284,8 +294,13 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
     };
     setClientRecords((current) => [created, ...current]);
     setNewName("");
+    setNewService("Social media mensal");
+    setNewContact("");
+    setNewEmail("");
+    setNewPhone("");
+    setNewOrigin("Indicação");
     setNewClientOpen(false);
-    onNotify(`${name} foi adicionado ao onboarding.`);
+    onNotify(`${name} foi adicionado à carteira de clientes.`);
   }
 
   const activeCount = clientRecords.filter((client) => client.status === "Ativo").length;
@@ -297,13 +312,13 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
       <PageHeading
         eyebrow="Relacionamento"
         title="Clientes"
-        description="Uma visão limpa de cada marca, contrato, entrega e próximo passo."
+        description="Cadastro e acompanhamento dos clientes da Aboveframe."
         actions={
           <>
             <Button
               variant="outline"
               className="h-10 rounded-xl border-[#ddd7ce] bg-transparent px-4 text-xs font-bold text-[#66625c] shadow-none hover:bg-white"
-              onClick={() => onNotify("Importação de clientes preparada para a etapa de dados reais.")}
+              onClick={() => onNotify("A importação de clientes ainda não está disponível.")}
             >
               <Upload className="size-4" /> Importar
             </Button>
@@ -318,10 +333,10 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
       />
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={UsersRound} label="Clientes ativos" value={String(activeCount).padStart(2, "0")} detail="carteira em andamento" tone="coral" />
-        <StatCard icon={Sparkles} label="Em onboarding" value={String(onboardingCount).padStart(2, "0")} detail="coleta inicial da marca" tone="blue" />
-        <StatCard icon={CheckCircle2} label="Aprovações abertas" value={String(approvals).padStart(2, "0")} detail="aguardando retorno" tone="gold" />
-        <StatCard icon={WalletCards} label="Receita da carteira" value="R$ 9,9k" detail="mensal + projetos" tone="sage" />
+        <StatCard icon={UsersRound} label="Clientes ativos" value={String(activeCount).padStart(2, "0")} detail="contratos ativos" tone="coral" />
+        <StatCard icon={FileText} label="Em onboarding" value={String(onboardingCount).padStart(2, "0")} detail="cadastros em andamento" tone="blue" />
+        <StatCard icon={CheckCircle2} label="Aprovações abertas" value={String(approvals).padStart(2, "0")} detail="pendentes de retorno" tone="gold" />
+        <StatCard icon={WalletCards} label="Receita da carteira" value="R$ 9,9k" detail="receita mensal estimada" tone="sage" />
       </section>
 
       <section className="rounded-[24px] border border-[#e6e1d9] bg-white p-4 shadow-[0_8px_30px_rgba(65,56,42,0.04)] sm:p-5">
@@ -389,11 +404,11 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
       )}
 
       <Dialog open={newClientOpen} onOpenChange={setNewClientOpen}>
-        <DialogContent className="rounded-[24px] border-[#e2dcd3] bg-[#fbfaf7] p-0 sm:max-w-xl">
+        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[24px] border-[#e2dcd3] bg-[#fbfaf7] p-0 sm:max-w-xl">
           <form onSubmit={createClient}>
             <DialogHeader className="border-b border-[#e9e4dc] px-6 py-5">
               <DialogTitle className="display-serif text-2xl font-medium tracking-[-0.03em] text-[#292a2f]">Adicionar cliente</DialogTitle>
-              <DialogDescription className="text-xs leading-5 text-[#88837b]">Crie a base do workspace. Os detalhes de marca entram no onboarding.</DialogDescription>
+              <DialogDescription className="text-xs leading-5 text-[#88837b]">Cadastre as informações principais do cliente.</DialogDescription>
             </DialogHeader>
             <div className="grid gap-5 px-6 py-6">
               <div className="space-y-2">
@@ -414,13 +429,17 @@ export function ClientsView({ onNotify }: { onNotify: Notify }) {
                 </Select>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2"><Label htmlFor="client-contact" className="text-xs font-black text-[#55525c]">Contato principal</Label><Input id="client-contact" placeholder="Nome do responsável" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div>
-                <div className="space-y-2"><Label htmlFor="client-email" className="text-xs font-black text-[#55525c]">E-mail</Label><Input id="client-email" type="email" placeholder="contato@marca.com" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div>
+                <div className="space-y-2"><Label htmlFor="client-contact" className="text-xs font-black text-[#55525c]">Contato principal</Label><Input id="client-contact" value={newContact} onChange={(event) => setNewContact(event.target.value)} placeholder="Nome do responsável" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div>
+                <div className="space-y-2"><Label htmlFor="client-email" className="text-xs font-black text-[#55525c]">E-mail</Label><Input id="client-email" type="email" value={newEmail} onChange={(event) => setNewEmail(event.target.value)} placeholder="contato@marca.com" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2"><Label htmlFor="client-phone" className="text-xs font-black text-[#55525c]">Telefone</Label><Input id="client-phone" type="tel" inputMode="tel" value={newPhone} onChange={(event) => setNewPhone(event.target.value)} placeholder="(15) 99999-9999" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div>
+                <div className="space-y-2"><Label className="text-xs font-black text-[#55525c]">Origem do contato</Label><Select value={newOrigin} onValueChange={setNewOrigin}><SelectTrigger className="h-11 w-full rounded-xl border-[#ddd7ce] bg-white shadow-none"><SelectValue /></SelectTrigger><SelectContent className="rounded-xl"><SelectItem value="Instagram">Instagram</SelectItem><SelectItem value="WhatsApp">WhatsApp</SelectItem><SelectItem value="Site">Site</SelectItem><SelectItem value="Google">Google</SelectItem><SelectItem value="LinkedIn">LinkedIn</SelectItem><SelectItem value="Indicação">Indicação</SelectItem><SelectItem value="Evento / networking">Evento / networking</SelectItem><SelectItem value="Outro">Outro</SelectItem></SelectContent></Select></div>
               </div>
             </div>
             <DialogFooter className="border-t border-[#e9e4dc] px-6 py-4">
               <Button type="button" variant="ghost" className="rounded-xl text-xs font-bold" onClick={() => setNewClientOpen(false)}>Cancelar</Button>
-              <Button type="submit" className="rounded-xl bg-[#24252a] px-5 text-xs font-bold text-[#f8f5ed]">Criar workspace <ArrowRight className="size-4" /></Button>
+              <Button type="submit" className="rounded-xl bg-[#24252a] px-5 text-xs font-bold text-[#f8f5ed]">Adicionar cliente <ArrowRight className="size-4" /></Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -479,11 +498,11 @@ function ClientDrawer({ client, onClose, onNotify }: { client: ClientRecord; onC
 
         <section className="mt-7 rounded-[22px] border border-[#e6e1d9] bg-white p-5"><div className="flex items-center justify-between"><div><p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#aaa59c]">Contrato atual</p><p className="mt-2 text-sm font-black text-[#34353a]">{client.service}</p></div><span className="text-sm font-black text-[#34353a]">{client.monthly}</span></div><div className="mt-5 flex items-center justify-between text-[10px]"><span className="font-bold text-[#918c84]">Progresso do ciclo</span><span className="font-black text-[#5f5c56]">{client.progress}%</span></div><Progress value={client.progress} className={`mt-2 h-2 bg-[#ede9e2] ${tone.progress}`} /></section>
 
-        <section className="mt-5 rounded-[22px] border border-[#e6e1d9] bg-white p-5"><p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#aaa59c]">Contato principal</p><div className="mt-4 space-y-3"><ContactLine icon={UserRound} value={client.contact} /><ContactLine icon={Mail} value={client.email} /><ContactLine icon={Phone} value={client.phone} /><ContactLine icon={AtSign} value={client.instagram} /></div></section>
+        <section className="mt-5 rounded-[22px] border border-[#e6e1d9] bg-white p-5"><p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#aaa59c]">Contato principal</p><div className="mt-4 space-y-3"><ContactLine icon={UserRound} value={client.contact} /><ContactLine icon={Mail} value={client.email} /><ContactLine icon={Phone} value={client.phone} /><ContactLine icon={AtSign} value={client.instagram} /><ContactLine icon={Target} value={`Origem: ${client.origin}`} /></div></section>
 
-        <section className="mt-5 rounded-[22px] border border-[#e6e1d9] bg-white p-5"><div className="flex items-center gap-2"><History className="size-4 text-[#a85e42]" /><p className="text-xs font-black text-[#34353a]">Próximos movimentos</p></div><div className="mt-4 space-y-3"><TimelineItem tone={tone.dot} title={client.next} detail="Próxima ação da operação" /><TimelineItem tone="bg-[#8ca8c1]" title="Atualizar Brand Hub" detail="Revisão estratégica do mês" /><TimelineItem tone="bg-[#d9b36c]" title="Preparar relatório mensal" detail="Fechamento do ciclo" /></div></section>
+        <section className="mt-5 rounded-[22px] border border-[#e6e1d9] bg-white p-5"><div className="flex items-center gap-2"><History className="size-4 text-[#a85e42]" /><p className="text-xs font-black text-[#34353a]">Próximas atividades</p></div><div className="mt-4 space-y-3"><TimelineItem tone={tone.dot} title={client.next} detail="Próxima atividade" /><TimelineItem tone="bg-[#8ca8c1]" title="Atualizar Brand Hub" detail="Revisão mensal" /><TimelineItem tone="bg-[#d9b36c]" title="Preparar relatório mensal" detail="Fechamento do período" /></div></section>
 
-        <div className="mt-6 grid gap-2 sm:grid-cols-2"><Button variant="outline" className="h-11 rounded-xl border-[#ddd7ce] bg-white text-xs font-bold shadow-none" onClick={() => onNotify(`Mensagem para ${client.name} preparada.`)}><MessageCircle className="size-4" /> Conversar</Button><Button className="h-11 rounded-xl bg-[#24252a] text-xs font-bold text-[#f8f5ed]" onClick={() => onNotify(`Workspace de ${client.name} aberto.`)}>Abrir workspace <ArrowRight className="size-4" /></Button></div>
+        <div className="mt-6 grid gap-2 sm:grid-cols-2"><Button variant="outline" className="h-11 rounded-xl border-[#ddd7ce] bg-white text-xs font-bold shadow-none" onClick={() => onNotify(`Contato de ${client.name} selecionado.`)}><MessageCircle className="size-4" /> Conversar</Button><Button className="h-11 rounded-xl bg-[#24252a] text-xs font-bold text-[#f8f5ed]" onClick={() => onNotify(`Cadastro de ${client.name} aberto.`)}>Abrir cliente <ArrowRight className="size-4" /></Button></div>
       </div>
     </div>
   );
@@ -495,6 +514,7 @@ type Opportunity = {
   id: number;
   company: string;
   contact: string;
+  phone: string;
   service: string;
   value: number;
   stage: Stage;
@@ -512,15 +532,15 @@ const stages: Array<{ name: Stage; label: string; helper: string; tone: Tone }> 
 ];
 
 const initialOpportunities: Opportunity[] = [
-  { id: 1, company: "Clínica Aurora", contact: "Marina Alves", service: "Branding completo", value: 3200, stage: "Novo lead", next: "Hoje, 15:30", origin: "Indicação", tone: "coral" },
-  { id: 2, company: "Casa Orbe", contact: "Rafael Nunes", service: "Social media", value: 2100, stage: "Novo lead", next: "Amanhã, 10:00", origin: "Instagram", tone: "sage" },
-  { id: 3, company: "Lumi Estética", contact: "Ana Luiza", service: "Captação mensal", value: 1800, stage: "Reunião", next: "02 set, 14:00", origin: "Site", tone: "gold" },
-  { id: 4, company: "BEM Odonto", contact: "Dr. Vinícius", service: "Posicionamento", value: 2800, stage: "Reunião", next: "03 set, 09:30", origin: "Networking", tone: "blue" },
-  { id: 5, company: "Ateliê Manacá", contact: "Paula Mendes", service: "Branding + conteúdo", value: 4600, stage: "Proposta", next: "Follow-up hoje", origin: "Indicação", tone: "sage" },
-  { id: 6, company: "Nexum Tech", contact: "Bruno Leal", service: "Conteúdo B2B", value: 2500, stage: "Proposta", next: "Visualizou há 1 dia", origin: "LinkedIn", tone: "blue" },
-  { id: 7, company: "Dra. Camila Reis", contact: "Camila Reis", service: "Marca pessoal", value: 2400, stage: "Proposta", next: "Responder dúvida", origin: "Instagram", tone: "coral" },
-  { id: 8, company: "Fio Arquitetura", contact: "Caio Moraes", service: "Social media", value: 1950, stage: "Negociação", next: "Ajustar escopo", origin: "Site", tone: "gold" },
-  { id: 9, company: "Studio Noma", contact: "Nathalia Lima", service: "Conteúdo mensal", value: 2200, stage: "Contrato", next: "Iniciar onboarding", origin: "Indicação", tone: "ink" },
+  { id: 1, company: "Clínica Aurora", contact: "Marina Alves", phone: "Não informado", service: "Branding completo", value: 3200, stage: "Novo lead", next: "Hoje, 15:30", origin: "Indicação", tone: "coral" },
+  { id: 2, company: "Casa Orbe", contact: "Rafael Nunes", phone: "Não informado", service: "Social media", value: 2100, stage: "Novo lead", next: "Amanhã, 10:00", origin: "Instagram", tone: "sage" },
+  { id: 3, company: "Lumi Estética", contact: "Ana Luiza", phone: "Não informado", service: "Captação mensal", value: 1800, stage: "Reunião", next: "02 set, 14:00", origin: "Site", tone: "gold" },
+  { id: 4, company: "BEM Odonto", contact: "Dr. Vinícius", phone: "Não informado", service: "Posicionamento", value: 2800, stage: "Reunião", next: "03 set, 09:30", origin: "Evento / networking", tone: "blue" },
+  { id: 5, company: "Ateliê Manacá", contact: "Paula Mendes", phone: "Não informado", service: "Branding + conteúdo", value: 4600, stage: "Proposta", next: "Follow-up hoje", origin: "Indicação", tone: "sage" },
+  { id: 6, company: "Nexum Tech", contact: "Bruno Leal", phone: "Não informado", service: "Conteúdo B2B", value: 2500, stage: "Proposta", next: "Visualizou há 1 dia", origin: "LinkedIn", tone: "blue" },
+  { id: 7, company: "Dra. Camila Reis", contact: "Camila Reis", phone: "Não informado", service: "Marca pessoal", value: 2400, stage: "Proposta", next: "Responder dúvida", origin: "Instagram", tone: "coral" },
+  { id: 8, company: "Fio Arquitetura", contact: "Caio Moraes", phone: "Não informado", service: "Social media", value: 1950, stage: "Negociação", next: "Ajustar escopo", origin: "Site", tone: "gold" },
+  { id: 9, company: "Studio Noma", contact: "Nathalia Lima", phone: "Não informado", service: "Conteúdo mensal", value: 2200, stage: "Contrato", next: "Iniciar onboarding", origin: "Indicação", tone: "ink" },
 ];
 
 export function PipelineView({ onNotify }: { onNotify: Notify }) {
@@ -529,13 +549,15 @@ export function PipelineView({ onNotify }: { onNotify: Notify }) {
   const [newLeadOpen, setNewLeadOpen] = useState(false);
   const [leadCompany, setLeadCompany] = useState("");
   const [leadContact, setLeadContact] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadOrigin, setLeadOrigin] = useState("Instagram");
   const [leadService, setLeadService] = useState("Social media");
   const [leadValue, setLeadValue] = useState("1800");
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) return opportunities;
-    return opportunities.filter((item) => [item.company, item.contact, item.service, item.origin].some((value) => value.toLowerCase().includes(query)));
+    return opportunities.filter((item) => [item.company, item.contact, item.phone, item.service, item.origin].some((value) => value.toLowerCase().includes(query)));
   }, [opportunities, search]);
 
   const openValue = opportunities.filter((item) => item.stage !== "Contrato").reduce((sum, item) => sum + item.value, 0);
@@ -559,16 +581,21 @@ export function PipelineView({ onNotify }: { onNotify: Notify }) {
     setOpportunities((current) => [{
       id: Date.now(),
       company,
-      contact: leadContact.trim() || "Contato a definir",
+      contact: leadContact.trim() || "Não informado",
+      phone: leadPhone.trim() || "Não informado",
       service: leadService,
       value: Number(leadValue.replace(/\D/g, "")) || 0,
       stage: "Novo lead",
       next: "Fazer primeiro contato",
-      origin: "Cadastro manual",
+      origin: leadOrigin,
       tone: "blue",
     }, ...current]);
     setLeadCompany("");
     setLeadContact("");
+    setLeadPhone("");
+    setLeadOrigin("Instagram");
+    setLeadService("Social media");
+    setLeadValue("1800");
     setNewLeadOpen(false);
     onNotify(`${company} entrou no pipeline.`);
   }
@@ -578,7 +605,7 @@ export function PipelineView({ onNotify }: { onNotify: Notify }) {
       <PageHeading
         eyebrow="Comercial"
         title="Pipeline"
-        description="Do primeiro contato ao contrato, sem perder contexto no meio do caminho."
+        description="Acompanhamento das oportunidades por etapa comercial."
         actions={
           <>
             <Button variant="outline" className="h-10 rounded-xl border-[#ddd7ce] bg-transparent px-4 text-xs font-bold text-[#66625c] shadow-none hover:bg-white" onClick={() => onNotify("Filtro comercial atualizado para este mês.")}><CalendarDays className="size-4" /> Este mês</Button>
@@ -597,7 +624,7 @@ export function PipelineView({ onNotify }: { onNotify: Notify }) {
       <section className="rounded-[24px] border border-[#e6e1d9] bg-white p-4 shadow-[0_8px_30px_rgba(65,56,42,0.04)]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <label className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl border border-[#e5e0d8] bg-[#faf8f4] px-3 text-[#98938b] sm:max-w-sm"><Search className="size-4" /><span className="sr-only">Buscar oportunidade</span><input value={search} onChange={(event) => setSearch(event.target.value)} className="min-w-0 flex-1 bg-transparent text-xs font-semibold text-[#313136] outline-none placeholder:text-[#aaa59c]" placeholder="Buscar oportunidade" /></label>
-          <div className="flex items-center gap-2"><Button variant="ghost" className="h-9 rounded-xl px-3 text-xs font-bold text-[#77736b]" onClick={() => onNotify("Filtros avançados entram com a base de dados.")}><Filter className="size-3.5" /> Filtros</Button><p className="text-[11px] font-semibold text-[#9a958d]">{filtered.length} oportunidades</p></div>
+          <div className="flex items-center gap-2"><Button variant="ghost" className="h-9 rounded-xl px-3 text-xs font-bold text-[#77736b]" onClick={() => onNotify("Os filtros avançados ainda não estão disponíveis.")}><Filter className="size-3.5" /> Filtros</Button><p className="text-[11px] font-semibold text-[#9a958d]">{filtered.length} oportunidades</p></div>
         </div>
       </section>
 
@@ -624,12 +651,13 @@ export function PipelineView({ onNotify }: { onNotify: Notify }) {
       </section>
 
       <Dialog open={newLeadOpen} onOpenChange={setNewLeadOpen}>
-        <DialogContent className="rounded-[24px] border-[#e2dcd3] bg-[#fbfaf7] p-0 sm:max-w-xl">
+        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[24px] border-[#e2dcd3] bg-[#fbfaf7] p-0 sm:max-w-xl">
           <form onSubmit={createLead}>
-            <DialogHeader className="border-b border-[#e9e4dc] px-6 py-5"><DialogTitle className="display-serif text-2xl font-medium tracking-[-0.03em] text-[#292a2f]">Novo lead</DialogTitle><DialogDescription className="text-xs leading-5 text-[#88837b]">Registre o essencial agora. O histórico começa no primeiro contato.</DialogDescription></DialogHeader>
+            <DialogHeader className="border-b border-[#e9e4dc] px-6 py-5"><DialogTitle className="display-serif text-2xl font-medium tracking-[-0.03em] text-[#292a2f]">Novo lead</DialogTitle><DialogDescription className="text-xs leading-5 text-[#88837b]">Cadastre os dados comerciais da oportunidade.</DialogDescription></DialogHeader>
             <div className="grid gap-5 px-6 py-6">
               <div className="space-y-2"><Label htmlFor="lead-company" className="text-xs font-black text-[#55525c]">Empresa ou marca</Label><Input id="lead-company" value={leadCompany} onChange={(event) => setLeadCompany(event.target.value)} placeholder="Ex.: Clínica Aurora" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" autoFocus /></div>
               <div className="space-y-2"><Label htmlFor="lead-contact" className="text-xs font-black text-[#55525c]">Pessoa de contato</Label><Input id="lead-contact" value={leadContact} onChange={(event) => setLeadContact(event.target.value)} placeholder="Nome do responsável" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div>
+              <div className="grid gap-4 sm:grid-cols-2"><div className="space-y-2"><Label htmlFor="lead-phone" className="text-xs font-black text-[#55525c]">Telefone</Label><Input id="lead-phone" type="tel" inputMode="tel" value={leadPhone} onChange={(event) => setLeadPhone(event.target.value)} placeholder="(15) 99999-9999" className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div><div className="space-y-2"><Label className="text-xs font-black text-[#55525c]">Origem do lead</Label><Select value={leadOrigin} onValueChange={setLeadOrigin}><SelectTrigger className="h-11 w-full rounded-xl border-[#ddd7ce] bg-white shadow-none"><SelectValue /></SelectTrigger><SelectContent className="rounded-xl"><SelectItem value="Instagram">Instagram</SelectItem><SelectItem value="WhatsApp">WhatsApp</SelectItem><SelectItem value="Site">Site</SelectItem><SelectItem value="Google">Google</SelectItem><SelectItem value="LinkedIn">LinkedIn</SelectItem><SelectItem value="Indicação">Indicação</SelectItem><SelectItem value="Evento / networking">Evento / networking</SelectItem><SelectItem value="Outro">Outro</SelectItem></SelectContent></Select></div></div>
               <div className="grid gap-4 sm:grid-cols-2"><div className="space-y-2"><Label className="text-xs font-black text-[#55525c]">Serviço de interesse</Label><Select value={leadService} onValueChange={setLeadService}><SelectTrigger className="h-11 w-full rounded-xl border-[#ddd7ce] bg-white shadow-none"><SelectValue /></SelectTrigger><SelectContent className="rounded-xl"><SelectItem value="Social media">Social media</SelectItem><SelectItem value="Branding completo">Branding completo</SelectItem><SelectItem value="Captação mensal">Captação mensal</SelectItem><SelectItem value="Posicionamento">Posicionamento</SelectItem><SelectItem value="Projeto personalizado">Projeto personalizado</SelectItem></SelectContent></Select></div><div className="space-y-2"><Label htmlFor="lead-value" className="text-xs font-black text-[#55525c]">Valor estimado</Label><Input id="lead-value" inputMode="numeric" value={leadValue} onChange={(event) => setLeadValue(event.target.value)} className="h-11 rounded-xl border-[#ddd7ce] bg-white shadow-none" /></div></div>
             </div>
             <DialogFooter className="border-t border-[#e9e4dc] px-6 py-4"><Button type="button" variant="ghost" className="rounded-xl text-xs font-bold" onClick={() => setNewLeadOpen(false)}>Cancelar</Button><Button type="submit" className="rounded-xl bg-[#24252a] px-5 text-xs font-bold text-[#f8f5ed]">Adicionar ao pipeline <ArrowRight className="size-4" /></Button></DialogFooter>
@@ -647,7 +675,7 @@ function OpportunityCard({ opportunity, onAdvance, onNotify }: { opportunity: Op
     <article className="rounded-[18px] border border-[#e5e0d8] bg-white p-4 shadow-[0_6px_18px_rgba(62,53,40,0.045)]">
       <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="truncate text-xs font-black text-[#34353a]">{opportunity.company}</p><p className="mt-1 truncate text-[10px] text-[#9a958d]">{opportunity.contact}</p></div><button type="button" className="text-[#bbb5ac] hover:text-[#66625c]" aria-label={`Opções de ${opportunity.company}`} onClick={() => onNotify(`Detalhes comerciais de ${opportunity.company}.`)}><MoreHorizontal className="size-4" /></button></div>
       <div className="mt-4 flex items-center justify-between gap-2"><Badge className={`max-w-[150px] truncate border-0 px-2 py-1 text-[9px] font-black ${tone.soft}`}>{opportunity.service}</Badge><span className="text-xs font-black text-[#3b3c41]">{currency(opportunity.value)}</span></div>
-      <div className="mt-4 rounded-xl bg-[#f8f6f1] p-3"><div className="flex items-center gap-2 text-[9px] font-bold text-[#8e8981]"><Clock3 className="size-3" /><span className="truncate">{opportunity.next}</span></div><div className="mt-2 flex items-center gap-2 text-[9px] font-bold text-[#aaa59c]"><Target className="size-3" /><span>{opportunity.origin}</span></div></div>
+      <div className="mt-4 rounded-xl bg-[#f8f6f1] p-3"><div className="flex items-center gap-2 text-[9px] font-bold text-[#8e8981]"><Clock3 className="size-3" /><span className="truncate">{opportunity.next}</span></div><div className="mt-2 flex items-center gap-2 text-[9px] font-bold text-[#aaa59c]"><Phone className="size-3" /><span className="truncate">{opportunity.phone}</span></div><div className="mt-2 flex items-center gap-2 text-[9px] font-bold text-[#aaa59c]"><Target className="size-3" /><span>{opportunity.origin}</span></div></div>
       <button type="button" onClick={onAdvance} className={`mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl py-2 text-[10px] font-black transition ${finalStage ? "bg-[#eef4ec] text-[#557053]" : "bg-[#f1eee7] text-[#66625c] hover:bg-[#24252a] hover:text-[#f8f5ed]"}`}>{finalStage ? <><Check className="size-3" /> Fechado</> : <>Avançar etapa <ArrowRight className="size-3" /></>}</button>
     </article>
   );
@@ -661,19 +689,19 @@ const roadmapData: Record<string, { eyebrow: string; description: string; icon: 
     tone: "coral",
     features: [
       { title: "Fila editorial", description: "Conteúdos organizados por status e responsável.", icon: LayoutList },
-      { title: "Aprovação por link", description: "Aprovar ou solicitar alteração em poucos segundos.", icon: CheckCircle2 },
+      { title: "Aprovação por link", description: "Registro de aprovação e solicitação de ajustes.", icon: CheckCircle2 },
       { title: "Histórico de versões", description: "Decisões e ajustes registrados no conteúdo.", icon: History },
     ],
   },
   Calendário: {
     eyebrow: "Planejamento",
-    description: "A visão mensal de tudo que será produzido, aprovado e publicado.",
+    description: "Planejamento mensal de produção, aprovação e publicação.",
     icon: CalendarDays,
     tone: "blue",
     features: [
-      { title: "Mês, semana e lista", description: "Três formas de enxergar a operação.", icon: CalendarDays },
-      { title: "Filtros por cliente", description: "Encontre cada entrega sem caça ao tesouro.", icon: Filter },
-      { title: "Datas de entrega", description: "Prazos e responsáveis visíveis para todo o ciclo.", icon: Clock3 },
+      { title: "Mês, semana e lista", description: "Visualizações mensal, semanal e em lista.", icon: CalendarDays },
+      { title: "Filtros por cliente", description: "Consulta de entregas por cliente.", icon: Filter },
+      { title: "Datas de entrega", description: "Controle de prazos e responsáveis.", icon: Clock3 },
     ],
   },
   Arquivos: {
@@ -683,13 +711,13 @@ const roadmapData: Record<string, { eyebrow: string; description: string; icon: 
     tone: "gold",
     features: [
       { title: "Pastas por cliente", description: "Logos, fotos, vídeos e documentos organizados.", icon: FolderOpen },
-      { title: "Arquivos aprovados", description: "A versão certa sempre identificada.", icon: CheckCircle2 },
-      { title: "Busca rápida", description: "Encontre ativos sem abrir pasta por pasta.", icon: Search },
+      { title: "Arquivos aprovados", description: "Identificação da versão aprovada em cada projeto.", icon: CheckCircle2 },
+      { title: "Busca rápida", description: "Busca por nome, cliente ou tipo de arquivo.", icon: Search },
     ],
   },
   Financeiro: {
     eyebrow: "Gestão comercial",
-    description: "Mensalidades, vencimentos e receita recorrente sem virar um sistema contábil pesado.",
+    description: "Controle de mensalidades, vencimentos e receita recorrente.",
     icon: WalletCards,
     tone: "sage",
     features: [
@@ -700,13 +728,13 @@ const roadmapData: Record<string, { eyebrow: string; description: string; icon: 
   },
   Relatórios: {
     eyebrow: "Resultados",
-    description: "Métricas traduzidas em leitura estratégica e próximos movimentos.",
+    description: "Indicadores de entrega, alcance, engajamento e conversão.",
     icon: BarChart3,
     tone: "ink",
     features: [
       { title: "Resumo do período", description: "O que foi entregue e como performou.", icon: BarChart3 },
       { title: "Melhores conteúdos", description: "Destaques de alcance, engajamento e conversão.", icon: TrendingUp },
-      { title: "Próximo ciclo", description: "Recomendações práticas da Aboveframe.", icon: Sparkles },
+      { title: "Próximo período", description: "Planejamento das próximas entregas.", icon: CalendarDays },
     ],
   },
 };
@@ -717,8 +745,8 @@ export function ModuleRoadmapView({ module, onNotify }: { module: string; onNoti
   const Icon = data.icon;
   return (
     <div className="space-y-6">
-      <PageHeading eyebrow={data.eyebrow} title={module} description={data.description} actions={<Button className="h-10 rounded-xl bg-[#24252a] px-4 text-xs font-bold text-[#f8f5ed]" onClick={() => onNotify(`${module} entrou na fila da próxima construção.`)}><Sparkles className="size-4" /> Próxima etapa</Button>} />
-      <section className="overflow-hidden rounded-[28px] bg-[#24252a] text-[#f8f5ed]"><div className="relative grid gap-8 px-6 py-8 sm:px-9 lg:grid-cols-[0.9fr_1.1fr] lg:p-10"><div className="relative z-10"><div className={`flex size-11 items-center justify-center rounded-2xl ${tone.soft}`}><Icon className="size-5" /></div><p className="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-[#d2a389]">Em construção · MVP</p><h2 className="display-serif mt-3 max-w-lg text-3xl leading-tight tracking-[-0.04em] sm:text-4xl">Essa área já tem um fluxo definido.</h2><p className="mt-4 max-w-lg text-sm leading-6 text-[#b7b5af]">Clientes e Pipeline entram primeiro porque alimentam todas as telas seguintes. {module} será conectado a essa mesma base.</p></div><div className="relative z-10 grid gap-3 sm:grid-cols-3 lg:self-end">{data.features.map((feature) => { const FeatureIcon = feature.icon; return <article key={feature.title} className="rounded-2xl border border-white/10 bg-white/[0.07] p-4"><FeatureIcon className="size-4 text-[#e5a98e]" /><h3 className="mt-4 text-xs font-black text-white">{feature.title}</h3><p className="mt-2 text-[10px] leading-4 text-[#9e9d98]">{feature.description}</p></article>; })}</div><div className="pointer-events-none absolute -right-24 -top-32 size-96 rounded-full border border-white/10" /></div></section>
+      <PageHeading eyebrow={data.eyebrow} title={module} description={data.description} actions={<Button className="h-10 rounded-xl bg-[#24252a] px-4 text-xs font-bold text-[#f8f5ed]" onClick={() => onNotify(`${module} está planejado para uma próxima versão.`)}><Clock3 className="size-4" /> Módulo planejado</Button>} />
+      <section className="overflow-hidden rounded-[28px] bg-[#24252a] text-[#f8f5ed]"><div className="relative grid gap-8 px-6 py-8 sm:px-9 lg:grid-cols-[0.9fr_1.1fr] lg:p-10"><div className="relative z-10"><div className={`flex size-11 items-center justify-center rounded-2xl ${tone.soft}`}><Icon className="size-5" /></div><p className="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-[#d2a389]">Módulo planejado</p><h2 className="display-serif mt-3 max-w-lg text-3xl leading-tight tracking-[-0.04em] sm:text-4xl">Esta área ainda não está disponível.</h2><p className="mt-4 max-w-lg text-sm leading-6 text-[#b7b5af]">{module} será integrado à base de clientes e ao pipeline em uma próxima versão.</p></div><div className="relative z-10 grid gap-3 sm:grid-cols-3 lg:self-end">{data.features.map((feature) => { const FeatureIcon = feature.icon; return <article key={feature.title} className="rounded-2xl border border-white/10 bg-white/[0.07] p-4"><FeatureIcon className="size-4 text-[#e5a98e]" /><h3 className="mt-4 text-xs font-black text-white">{feature.title}</h3><p className="mt-2 text-[10px] leading-4 text-[#9e9d98]">{feature.description}</p></article>; })}</div><div className="pointer-events-none absolute -right-24 -top-32 size-96 rounded-full border border-white/10" /></div></section>
       <section className="grid gap-4 md:grid-cols-3">{data.features.map((feature, index) => { const FeatureIcon = feature.icon; return <article key={feature.title} className="rounded-[22px] border border-[#e6e1d9] bg-white p-5 shadow-[0_8px_30px_rgba(65,56,42,0.04)]"><div className="flex items-start justify-between"><div className={`flex size-9 items-center justify-center rounded-xl ${tone.soft}`}><FeatureIcon className="size-4" /></div><span className="text-[10px] font-black text-[#c0bbb2]">0{index + 1}</span></div><h3 className="mt-5 text-sm font-black text-[#34353a]">{feature.title}</h3><p className="mt-2 text-xs leading-5 text-[#8e8981]">{feature.description}</p></article>; })}</section>
     </div>
   );

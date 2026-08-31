@@ -4,8 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://above-studio.tekzgguk.chatgpt.site"),
-  title: "Above Studio — Operação Aboveframe",
-  description: "A operação da Aboveframe, do primeiro oi ao relatório final.",
+  title: "Above Studio",
+  description: "Gestão comercial e operacional da Aboveframe.",
   other: {
     "codex-preview": "development",
   },
@@ -15,21 +15,21 @@ export const metadata: Metadata = {
     apple: "/favicon.png",
   },
   openGraph: {
-    title: "Above Studio — Operação Aboveframe",
-    description: "A operação da Aboveframe, do primeiro oi ao relatório final.",
+    title: "Above Studio",
+    description: "Gestão comercial e operacional da Aboveframe.",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Above Studio — Operação Aboveframe",
+        alt: "Above Studio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Above Studio — Operação Aboveframe",
-    description: "A operação da Aboveframe, do primeiro oi ao relatório final.",
+    title: "Above Studio",
+    description: "Gestão comercial e operacional da Aboveframe.",
     images: ["/og.png"],
   },
 };
